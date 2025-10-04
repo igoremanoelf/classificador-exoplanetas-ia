@@ -8,18 +8,18 @@ Este projeto é um protótipo funcional de uma aplicação web que utiliza Machi
 
 ## 🎯 Objetivo do Desafio
 
-[cite\_start]O desafio proposto pela NASA foi criar um modelo de IA/ML treinado com dados de missões de exoplanetas para analisar novos dados e identificar planetas com precisão, tudo isso apresentado através de uma interface web interativa[cite: 1, 3, 11]. [cite\_start]Nossa solução ataca diretamente o problema da análise manual de dados, que é demorada, automatizando a classificação inicial para que os cientistas possam focar nos candidatos mais promissores[cite: 1].
+O desafio proposto pela NASA foi criar um modelo de IA/ML treinado com dados de missões de exoplanetas para analisar novos dados e identificar planetas com precisão, tudo isso apresentado através de uma interface web interativa. Nossa solução ataca diretamente o problema da análise manual de dados, que é demorada, automatizando a classificação inicial para que os cientistas possam focar nos candidatos mais promissores.
 
 ## ✨ Features
 
-  * [cite\_start]**Modelo de Machine Learning:** Utiliza um `RandomForestClassifier` treinado com o dataset do Kepler para classificar candidatos em `CONFIRMED`, `CANDIDATE` ou `FALSE POSITIVE`[cite: 11].
-  * [cite\_start]**API Robusta:** Um backend construído com **FastAPI** que serve o modelo de IA e lida com as requisições de predição[cite: 7, 11].
-  * [cite\_start]**Frontend Interativo:** Uma interface de usuário amigável construída com HTML, CSS e JavaScript puro[cite: 8].
+  * **Modelo de Machine Learning:** Utiliza um `RandomForestClassifier` treinado com o dataset do Kepler para classificar candidatos em `CONFIRMED`, `CANDIDATE` ou `FALSE POSITIVE`.
+  * **API Robusta:** Um backend construído com **FastAPI** que serve o modelo de IA e lida com as requisições de predição.
+  * **Frontend Interativo:** Uma interface de usuário amigável construída com HTML, CSS e JavaScript puro.
   * **Visualização 3D Dinâmica:** Uma cena 3D construída com **Three.js** que renderiza o exoplaneta classificado, com cor e tamanho baseados no resultado da IA.
 
 ## 🛠️ Tecnologias Utilizadas
 
-[cite\_start]Este projeto foi construído utilizando as seguintes tecnologias de código aberto, conforme sugerido pelo roteiro do desafio[cite: 4]:
+Este projeto foi construído utilizando as seguintes tecnologias de código aberto, conforme sugerido pelo roteiro do desafio:
 
   * **Backend & IA:**
 
