@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Classificador de Exoplanetas com IA</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+    <div class="container">
+        <header>
+            <h1>Classificador de Exoplanetas 🔭</h1>
+            <p>Insira as características de um candidato a exoplaneta para análise.</p>
+        </header>
+
+        <main class="main-content">
+            <div class="form-wrapper">
+                <form id="prediction-form">
+                    <h2>Principais Características</h2>
+                    <div class="form-grid">
+                        <div class="form-group"><label for="koi_fpflag_nt">Flag de Trânsito (NT)</label><input type="number" id="koi_fpflag_nt" value="0" step="any"></div>
+                        <div class="form-group"><label for="koi_fpflag_ss">Flag Estelar (SS)</label><input type="number" id="koi_fpflag_ss" value="0" step="any"></div>
+                        <div class="form-group"><label for="koi_fpflag_co">Flag Centroide (CO)</label><input type="number" id="koi_fpflag_co" value="0" step="any"></div>
+                        <div class="form-group"><label for="koi_fpflag_ec">Flag Contaminação (EC)</label><input type="number" id="koi_fpflag_ec" value="0" step="any"></div>
+                        <div class="form-group"><label for="koi_period">Período Orbital [dias]</label><input type="number" id="koi_period" value="9.55" step="any"></div>
+                        <div class="form-group"><label for="koi_duration">Duração do Trânsito [horas]</label><input type="number" id="koi_duration" value="2.8" step="any"></div>
+                        <div class="form-group"><label for="koi_depth">Profundidade do Trânsito [ppm]</label><input type="number" id="koi_depth" value="700.0" step="any"></div>
+                        <div class="form-group"><label for="koi_prad">Raio Planetário [raios terrestres]</label><input type="number" id="koi_prad" value="2.26" step="any"></div>
+                        <div class="form-group"><label for="koi_teq">Temperatura de Equilíbrio [K]</label><input type="number" id="koi_teq" value="793.0" step="any"></div>
+                        <div class="form-group"><label for="koi_model_snr">Sinal-Ruído do Trânsito</label><input type="number" id="koi_model_snr" value="25.8" step="any"></div>
+                    </div>
+                    <button type="submit" id="predict-button">Classificar</button>
+                </form>
+            </div>
+
+            <div class="result-wrapper">
+                <div id="result-container" class="hidden">
+                    <div id="result-text-info">
+                        <h2>Resultado da Predição</h2>
+                        <p id="prediction-class-text"></p>
+                    </div>
+                    <div id="scene-container">
+                        </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
