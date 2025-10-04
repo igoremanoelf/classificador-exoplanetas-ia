@@ -1,62 +1,86 @@
-# train_model.py
 
 import pandas as pd
-import joblib
-from pathlib import Path
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.pipeline import Pipeline
-from sklearn.metrics import accuracy_score
+from sklearn.ensemble import GradientBoostingClassifier
+from sklearn.metrics import accuracy_score, classification_report
+from sklearn.preprocessing import LabelEncoder, StandardScaler
+import joblib
+import numpy as np
 
-print("--- Iniciando script de treinamento do modelo ---")
+def train_advanced_exoplanet_model():
+    """
+    Enhanced function to train a high-performance model.
+    Uses more features, a Gradient Boosting model, and data scaling.
+    """
+    print("Starting the advanced training process...")
 
-# --- Configuração de Caminhos ---
-DATA_PATH = Path("data/kepler_data.csv")
-MODEL_DIR = Path("saved_model")
-MODEL_PATH = MODEL_DIR / "model.joblib"
-MODEL_DIR.mkdir(exist_ok=True) # Cria a pasta saved_model se não existir
+    # 1. Load Data
+    url = "https://exoplanetarchive.ipac.caltech.edu/cgi-bin/nstedAPI/nph-nstedAPI?table=cumulative&select=*&format=csv"
+    try:
+        df = pd.read_csv(url)
+        print("KOI data downloaded successfully.")
+    except Exception as e:
+        print(f"Error downloading data: {e}")
+        return
 
-# --- Carregamento e Limpeza ---
-print(f"Carregando dataset de {DATA_PATH}...")
-df = pd.read_csv(DATA_PATH, comment="#")
-df.columns = df.columns.str.strip()
+    # 2. Feature Engineering and Preprocessing
+    features = [
+        'koi_period',
+        'koi_duration',
+        'koi_depth',
+        'koi_prad',
+        'koi_teq',
+        'koi_insol',
+        'koi_steff',
+        'koi_slogg',
+        'koi_srad',
+        'koi_impact',
+        'koi_model_snr', # Correct column name for Signal-to-Noise Ratio
+        'koi_fpflag_nt',
+        'koi_fpflag_ss',
+        'koi_fpflag_co',
+        'koi_fpflag_ec',
+    ]
+    target = 'koi_disposition'
+    
+    df_filtered = df[features + [target]]
+    
+    df_clean = df_filtered.dropna()
+    df_clean = df_clean[df_clean[target].isin(['CONFIRMED', 'CANDIDATE', 'FALSE POSITIVE'])]
+    print(f"Dataset reduced to {df_clean.shape[0]} samples after cleaning.")
 
-print("Limpando dados... Removendo colunas com mais de 40% de valores ausentes.")
-# Primeiro, remova colunas que são muito vazias
-limiar_na = 0.4
-missing_ratio = df.isna().mean()
-cols_validas = missing_ratio[missing_ratio < limiar_na].index
-df = df[cols_validas].copy()
+    le = LabelEncoder()
+    df_clean['target_encoded'] = le.fit_transform(df_clean[target])
+    class_names = le.classes_
+    print(f"Encoded classes: {list(zip(le.transform(class_names), class_names))}")
 
-# Agora, remova as poucas linhas restantes que ainda têm valores ausentes
-print("Removendo linhas com valores ausentes restantes...")
-df.dropna(inplace=True)
+    X = df_clean[features]
+    y = df_clean['target_encoded']
 
-print(f"Dataset limpo! Formato final: {df.shape}")
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42, stratify=y)
+    print(f"Data split into {len(X_train)} for training and {len(X_test)} for testing.")
 
-# --- Preparação dos Dados ---
-print("Preparando dados para treinamento...")
-X = df.select_dtypes(include='number')
-y = df['koi_disposition']
-TRAINING_COLUMNS = X.columns.tolist()
+    scaler = StandardScaler()
+    X_train_scaled = scaler.fit_transform(X_train)
+    X_test_scaled = scaler.transform(X_test)
+    print("Features standardized with StandardScaler.")
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
+    print("Training the GradientBoostingClassifier model...")
+    model = GradientBoostingClassifier(n_estimators=200, learning_rate=0.1, max_depth=5, random_state=42)
+    model.fit(X_train_scaled, y_train)
+    print("Training complete.")
 
-# --- Criação e Treinamento do Pipeline ---
-print("Treinando o modelo RandomForestClassifier...")
-pipeline = Pipeline([
-    ('scaler', StandardScaler()),
-    ('classifier', RandomForestClassifier(n_estimators=100, random_state=42))
-])
-pipeline.fit(X_train, y_train)
+    y_pred = model.predict(X_test_scaled)
+    accuracy = accuracy_score(y_test, y_pred)
+    print(f"\nFINAL MODEL ACCURACY: {accuracy:.4f}")
+    print("\nFinal Classification Report:")
+    print(classification_report(y_test, y_pred, target_names=class_names))
 
-# --- Avaliação ---
-accuracy = pipeline.score(X_test, y_test)
-print(f"Acurácia do modelo no conjunto de teste: {accuracy:.4f}")
+    joblib.dump(model, 'exoplanet_model.pkl')
+    joblib.dump(le, 'label_encoder.pkl')
+    joblib.dump(scaler, 'scaler.pkl')
+    joblib.dump(features, 'model_features.pkl')
+    print("\nModel, Label Encoder, Scaler, and feature list saved successfully!")
 
-# --- Salvando o Modelo e as Colunas ---
-print(f"Salvando o pipeline treinado em {MODEL_PATH}...")
-joblib.dump({"model": pipeline, "columns": TRAINING_COLUMNS}, MODEL_PATH)
-
-print("--- Script de treinamento concluído com sucesso! ---")
+if __name__ == '__main__':
+    train_advanced_exoplanet_model()
